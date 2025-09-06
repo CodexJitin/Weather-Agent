@@ -13,23 +13,6 @@ It provides real-time weather, air quality, forecasts, and location-aware insigh
 * Modern CLI visuals with Rich (panels, colors, typing effect).
 * Error handling with graceful fallback messages.
 
-## 🛠️ Project Structure
-
-
-weather-agent/
-│
-├── Tools/
-│   ├── Current_Weather.py
-│   ├── Air_Pollution.py
-│   ├── Current_Location.py
-│   ├── W3H5D_Forecast.py
-│   └── Location_Coordinates.py
-│
-├── LLm.py                # LLM configuration
-├── main.py               # Entry point (Weather Agent CLI)
-└── README.md
-```
-
 ## ⚙️ Tech Stack
 
 * **LangChain Agents** — reasoning + tool orchestration.
