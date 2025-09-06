@@ -6,9 +6,10 @@ from rich.prompt import Prompt
 from rich.align import Align
 from rich.text import Text
 from time import sleep
+from datetime import datetime
 import warnings
-warnings.filterwarnings("ignore")
 
+warnings.filterwarnings("ignore")
 
 # Import your tools
 from Tools.Current_Weather import get_weather
@@ -29,17 +30,27 @@ tools: List = [
     get_forecast,
 ]
 
-PROMPT = """
-System: You are a weather information assistant developed by CodexJitin. Your job is to talk naturally with the user while giving accurate weather updates. Keep your tone conversational, like you’re chatting with someone, but always base your answers on the tools you have.
+
+def build_prompt(query: str) -> str:
+    """Builds the system prompt dynamically with current date and time."""
+    current_datetime = datetime.now().strftime("%A, %d %B %Y %I:%M %p")
+    return f"""
+System: You are a weather information assistant developed by CodexJitin. 
+Current date and time: {current_datetime}
+
+Your job is to talk naturally with the user while giving accurate weather updates. 
+Keep your tone conversational, like you’re chatting with someone, but always base your answers on the tools you have.
 
 Guidelines:
 Speak clearly and directly, avoid lists or bullet points.
 When someone asks about air quality, first grab the location coordinates, then check the air quality.
+If the user does not mention a city name, use their current location instead.
 Stay focused only on weather and details about yourself as the assistant.
 If the user brings up anything outside of weather, reply with: "I can only assist with weather-related queries."
 
-User: {input}
+User: {query}
 """
+
 
 # Initialize LangChain agent
 agent_executor = initialize_agent(
@@ -53,7 +64,7 @@ agent_executor = initialize_agent(
 
 def Weather_Agent(query: str) -> Union[str, Dict]:
     """Process a weather-related query using the LangChain agent."""
-    full_prompt = PROMPT.format(input=query)
+    full_prompt = build_prompt(query)
     try:
         response = agent_executor.invoke(full_prompt)
         return response["output"]
