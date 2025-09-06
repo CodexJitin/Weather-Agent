@@ -13,6 +13,20 @@ It provides real-time weather, air quality, forecasts, and location-aware insigh
 * Modern CLI visuals with Rich (panels, colors, typing effect).
 * Error handling with graceful fallback messages.
 
+## 📸 Screenshots  
+
+<p align="center">
+  <img src="Img/Screenshot 2025-09-06 092957.png" width="80%"/>
+</p>
+
+<p align="center">
+  <img src="Img/Screenshot 2025-09-06 093115.png" width="80%" />
+</p>
+
+<p align="center">
+  <img src="Img/Screenshot 2025-09-06 094709.png" width="80%"/>
+</p>
+
 ## ⚙️ Tech Stack
 
 * **LangChain Agents** — reasoning + tool orchestration.
