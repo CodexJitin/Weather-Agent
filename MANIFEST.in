@@ -1,0 +1,12 @@
+include README.md
+include LICENSE
+include requirements.txt
+recursive-include src/codex_weather_agent *.py
+recursive-include src/codex_weather_agent *.typed
+recursive-include examples *.py *.md
+recursive-exclude * __pycache__
+recursive-exclude * *.py[co]
+recursive-exclude * *.egg-info
+global-exclude .DS_Store
+global-exclude *.pyc
+global-exclude *.pyo
