@@ -5,14 +5,14 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "codex-weather-agent"
 version = "1.0.1"
-description = "Production-ready AI-powered conversational weather assistant built with LangGraph"
+description = "Production-ready conversational weather assistant built with LangGraph"
 readme = "README.md"
 requires-python = ">=3.9"
 license = "MIT"
 authors = [
     {name = "CodexJitin", email = "codejitin@gmail.com"}
 ]
-keywords = ["weather", "ai", "langgraph", "assistant", "openweathermap", "cli"]
+keywords = ["weather", "langgraph", "openweathermap", "cli", "python", "forecast"]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Developers",

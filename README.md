@@ -4,11 +4,11 @@
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-An **AI-powered conversational weather assistant** built with [LangGraph](https://www.langchain.com/langgraph), supporting multiple LLM providers (OpenAI, Azure OpenAI, Gemini, Claude) and providing real-time weather data through a production-ready Python API.
+A **professional conversational weather service** built with [LangGraph](https://www.langchain.com/langgraph), supporting multiple LLM providers (OpenAI, Azure OpenAI, Gemini, Claude) and providing real-time weather data through a production-ready Python API.
 
 ## ✨ Features
 
-- 🤖 **Conversational AI**: Natural language interactions powered by LangGraph workflows
+- 🤖 **Natural Conversations**: Intuitive natural language interactions powered by LangGraph workflows
 - 🌍 **Multiple LLM Support**: OpenAI, Azure OpenAI, Google Gemini, and Anthropic Claude
 - 🌦️ **Comprehensive Weather Data**: Current conditions, forecasts, and air quality
 - 📍 **Location Intelligence**: Automatic location detection and coordinate lookup

@@ -15,7 +15,7 @@ from .llm_providers.base import LLMProvider
 
 
 class WeatherAgentWorkflow:
-    """LangGraph workflow for weather assistant with performance optimizations."""
+    """LangGraph workflow for weather service with performance optimizations."""
     
     def __init__(self, llm_provider: LLMProvider, openweather_api_key: str = None):
         """Initialize the weather agent workflow.
@@ -45,7 +45,7 @@ class WeatherAgentWorkflow:
         """Build and cache the system prompt to avoid rebuilding on each request."""
         current_datetime = datetime.now().strftime("%A, %d %B %Y %I:%M %p")
         return f"""
-System: You are a weather information assistant developed by CodexJitin. 
+System: You are a professional weather information service developed by CodexJitin. 
 Current date and time: {current_datetime}
 
 Your job is to talk naturally with the user while giving accurate weather updates. 
@@ -55,8 +55,8 @@ Guidelines:
 - Speak clearly and directly, avoid lists or bullet points.
 - When someone asks about air quality, first grab the location coordinates, then check the air quality.
 - If the user does not mention a city name, use their current location instead.
-- Stay focused only on weather and details about yourself as the assistant.
-- If the user brings up anything outside of weather, reply with: "I can only assist with weather-related queries."
+- Stay focused only on weather and related information.
+- If the user brings up anything outside of weather, reply with: "I can only help with weather-related queries."
 """
     
     def _build_graph(self) -> StateGraph:
@@ -84,7 +84,7 @@ Guidelines:
     def _get_system_prompt_template(self) -> str:
         """Get cached system prompt template."""
         return """
-You are a weather information assistant developed by CodexJitin. 
+You are a professional weather information service developed by CodexJitin. 
 Current date and time: {current_datetime}
 
 Your job is to talk naturally with the user while giving accurate weather updates. 
@@ -94,8 +94,8 @@ Guidelines:
 - Speak clearly and directly, avoid lists or bullet points.
 - When someone asks about air quality, first grab the location coordinates, then check the air quality.
 - If the user does not mention a city name, use their current location instead.
-- Stay focused only on weather and details about yourself as the assistant.
-- If the user brings up anything outside of weather, reply with: "I can only assist with weather-related queries."
+- Stay focused only on weather and related information.
+- If the user brings up anything outside of weather, reply with: "I can only help with weather-related queries."
 
 Available tools:
 - get_weather: Get current weather for a city
@@ -240,7 +240,7 @@ Use these tools as needed to provide accurate weather information.
         
         # If there's an error and no response, provide a default error message
         if state["error"] and not state["response"]:
-            state["response"] = "I apologize, but I encountered an error while processing your weather request. Please try again."
+            state["response"] = "I'm sorry, but I encountered an error while processing your weather request. Please try again."
             
         return state
     
