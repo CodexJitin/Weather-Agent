@@ -5,7 +5,7 @@ This package provides a LangGraph-based weather assistant that can answer
 weather-related queries using multiple LLM providers.
 """
 
-__version__ = "1.0.2"
+__version__ = "1.0.3"
 __author__ = "CodexJitin"
 
 from .agent import WeatherAgent

@@ -1,35 +1,16 @@
-"""Current location detection tool for LangGraph with optimized performance."""
+"""Current location detection tool for LangGraph."""
 
 import logging
 import requests
 from typing import Dict, Any, Optional
-from functools import lru_cache
 from langchain_core.tools import tool
 
 logger = logging.getLogger(__name__)
 
-# Use a separate session for IP geolocation (different service)
-_location_session: Optional[requests.Session] = None
-
-def get_location_session() -> requests.Session:
-    """Get a reusable session for location detection."""
-    global _location_session
-    if _location_session is None:
-        _location_session = requests.Session()
-        adapter = requests.adapters.HTTPAdapter(
-            pool_connections=5,
-            pool_maxsize=10
-        )
-        _location_session.mount("http://", adapter)
-        _location_session.mount("https://", adapter)
-    return _location_session
-
-@lru_cache(maxsize=1)  # Cache the user's location (typically doesn't change often)
-def _get_cached_location() -> Optional[Dict[str, Any]]:
-    """Get and cache the current location based on IP."""
+def _get_location() -> Optional[Dict[str, Any]]:
+    """Get the current location based on IP."""
     try:
-        session = get_location_session()
-        response = session.get("https://ipinfo.io/json", timeout=5)
+        response = requests.get("https://ipinfo.io/json", timeout=10)
         response.raise_for_status()
         data = response.json()
         
@@ -65,4 +46,4 @@ def current_location() -> Optional[Dict[str, Any]]:
         
         Returns None if location data is unavailable or in case of errors
     """
-    return _get_cached_location()
+    return _get_location()

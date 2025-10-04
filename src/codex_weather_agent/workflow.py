@@ -1,9 +1,8 @@
-"""LangGraph workflow implementation for the weather agent with optimized performance."""
+"""LangGraph workflow implementation for the weather agent."""
 
 from typing import Dict, Any, List, Optional
 from datetime import datetime
 import json
-import functools
 
 from langgraph.graph import StateGraph, END
 from langchain_core.messages import SystemMessage, HumanMessage, AIMessage, ToolMessage
@@ -15,7 +14,7 @@ from .llm_providers.base import LLMProvider
 
 
 class WeatherAgentWorkflow:
-    """LangGraph workflow for weather service with performance optimizations."""
+    """LangGraph workflow for weather service."""
     
     def __init__(self, llm_provider: LLMProvider, openweather_api_key: str = None):
         """Initialize the weather agent workflow.
@@ -27,7 +26,7 @@ class WeatherAgentWorkflow:
         self.llm = llm_provider.llm
         self.openweather_api_key = openweather_api_key
         
-        # Pre-create tool map for faster lookup (O(1) instead of O(n))
+        # Create tool map for lookup
         self.tools = [
             get_weather,
             get_air_pollution,
@@ -37,27 +36,7 @@ class WeatherAgentWorkflow:
         ]
         self.tool_map = {tool.name: tool for tool in self.tools}
         
-        # Cache system prompt for reuse
-        self._system_prompt = self._build_system_prompt()
         self.graph = self._build_graph()
-    
-    def _build_system_prompt(self) -> str:
-        """Build and cache the system prompt to avoid rebuilding on each request."""
-        current_datetime = datetime.now().strftime("%A, %d %B %Y %I:%M %p")
-        return f"""
-System: You are a professional weather information service developed by CodexJitin. 
-Current date and time: {current_datetime}
-
-Your job is to talk naturally with the user while giving accurate weather updates. 
-Keep your tone conversational, like you're chatting with someone, but always base your answers on the tools you have.
-
-Guidelines:
-- Speak clearly and directly, avoid lists or bullet points.
-- When someone asks about air quality, first grab the location coordinates, then check the air quality.
-- If the user does not mention a city name, use their current location instead.
-- Stay focused only on weather and related information.
-- If the user brings up anything outside of weather, reply with: "I can only help with weather-related queries."
-"""
     
     def _build_graph(self) -> StateGraph:
         """Build the LangGraph workflow."""
@@ -80,9 +59,8 @@ Guidelines:
         
         return workflow.compile()
     
-    @functools.lru_cache(maxsize=1)
     def _get_system_prompt_template(self) -> str:
-        """Get cached system prompt template."""
+        """Get system prompt template."""
         return """
 You are a professional weather information service developed by CodexJitin. 
 Current date and time: {current_datetime}
@@ -146,27 +124,23 @@ Use these tools as needed to provide accurate weather information.
             
         return state
     
-    @functools.lru_cache(maxsize=100)
-    def _cached_tool_execution(self, tool_name: str, tool_args_str: str, api_key: Optional[str] = None) -> Dict[str, Any]:
-        """Cache tool results to avoid redundant API calls."""
+    def _execute_tool(self, tool_name: str, tool_args: Dict[str, Any]) -> Dict[str, Any]:
+        """Execute a tool with the given arguments."""
         tool = self.tool_map.get(tool_name)
         if not tool:
             return {"error": f"Unknown tool: {tool_name}"}
         
         try:
-            # Parse args back from string
-            tool_args = json.loads(tool_args_str)
-            
             # Add API key for OpenWeatherMap tools
-            if tool_name in ["get_weather", "get_air_pollution", "get_forecast", "get_location_coordinates"] and api_key:
-                tool_args["api_key"] = api_key
+            if tool_name in ["get_weather", "get_air_pollution", "get_forecast", "get_location_coordinates"] and self.openweather_api_key:
+                tool_args["api_key"] = self.openweather_api_key
             
             return tool.invoke(tool_args)
         except Exception as e:
             return {"error": f"Error executing tool {tool_name}: {str(e)}"}
 
     def _execute_tools_node(self, state: WeatherAgentState) -> WeatherAgentState:
-        """Execute the requested tools with caching."""
+        """Execute the requested tools."""
         if not state["tool_calls"]:
             return state
             
@@ -176,27 +150,10 @@ Use these tools as needed to provide accurate weather information.
             tool_name = tool_call["name"]
             tool_args = tool_call["args"]
             
-            # Use cached execution for better performance
-            tool_args_str = json.dumps(tool_args, sort_keys=True)
-            result = self._cached_tool_execution(
-                tool_name, 
-                tool_args_str, 
-                self.openweather_api_key
-            )
+            # Execute the tool
+            result = self._execute_tool(tool_name, tool_args)
             
             if "error" not in result:
-                # Store results in state for potential reuse
-                if tool_name == "current_location":
-                    state["current_location"] = result
-                elif tool_name == "get_location_coordinates":
-                    state["coordinates"] = result
-                elif tool_name == "get_weather":
-                    state["weather_data"] = result
-                elif tool_name == "get_forecast":
-                    state["forecast_data"] = result
-                elif tool_name == "get_air_pollution":
-                    state["pollution_data"] = result
-                
                 tool_results.append({
                     "tool_call_id": tool_call["id"],
                     "tool_name": tool_name,

@@ -1,39 +1,9 @@
-"""Current weather tool for LangGraph with optimized performance."""
+"""Current weather tool for LangGraph."""
 
 import os
 import requests
-from typing import Dict, Any, Optional
-from functools import lru_cache
+from typing import Dict, Any
 from langchain_core.tools import tool
-
-# Global session with connection pooling for better performance
-_session: Optional[requests.Session] = None
-
-def get_session() -> requests.Session:
-    """Get a reusable session with connection pooling."""
-    global _session
-    if _session is None:
-        _session = requests.Session()
-        # Configure connection pooling
-        adapter = requests.adapters.HTTPAdapter(
-            pool_connections=10,
-            pool_maxsize=20,
-            max_retries=3
-        )
-        _session.mount("http://", adapter)
-        _session.mount("https://", adapter)
-    return _session
-
-@lru_cache(maxsize=128)
-def _cached_weather_request(url: str) -> Dict[str, Any]:
-    """Cache weather requests to reduce API calls."""
-    try:
-        session = get_session()
-        response = session.get(url, timeout=5)
-        response.raise_for_status()
-        return response.json()
-    except Exception as e:
-        return {"error": str(e)}
 
 @tool
 def get_weather(city: str, api_key: str = None) -> Dict[str, Any]:
@@ -53,8 +23,13 @@ def get_weather(city: str, api_key: str = None) -> Dict[str, Any]:
     if not api_key:
         return {"error": "OpenWeather API key is required. Set OPENWEATHER_API_KEY environment variable or pass api_key parameter."}
     
-    # Normalize city name for consistent caching
+    # Normalize city name
     city_normalized = city.strip().lower()
     url = f"https://api.openweathermap.org/data/2.5/weather?q={city_normalized}&appid={api_key}&units=metric"
     
-    return _cached_weather_request(url)
+    try:
+        response = requests.get(url, timeout=10)
+        response.raise_for_status()
+        return response.json()
+    except Exception as e:
+        return {"error": str(e)}
