@@ -23,6 +23,12 @@ share/python-wheels/
 *.egg
 MANIFEST
 
+# Testing
+test.py
+test_*.py
+*_test.py
+tests/temp_*
+
 # PyInstaller
 *.manifest
 *.spec
