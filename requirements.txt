@@ -1,0 +1,17 @@
+# Core LangGraph and LangChain dependencies
+langgraph>=0.2.0
+langchain-core>=0.3.0
+langchain-google-genai>=2.0.0
+
+# HTTP requests and API clients
+requests>=2.31.0
+
+# Type hints and typing support
+typing-extensions>=4.7.0
+
+# Optional: For better development experience
+python-dotenv>=1.0.0
+
+# Optional: For Jupyter notebook support
+jupyter>=1.0.0
+ipykernel>=6.0.0

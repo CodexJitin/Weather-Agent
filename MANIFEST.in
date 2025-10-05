@@ -1,0 +1,9 @@
+include README.md
+include LICENSE
+include py.typed
+include example_usage.py
+recursive-include codex_weather_agent *.py
+recursive-include codex_weather_agent/tools *.py
+exclude .gitignore
+exclude *.pyc
+exclude **/__pycache__/**
